@@ -2,9 +2,8 @@
 #include <ESP8266WiFi.h>
 #include <EEPROM.h>
 
-#define https_port 443
-#define CHIP_ID 16531515
-#define FLASH_ID 1335390
+#define CHIP_ID 3519727
+#define CHIP_ID_STR "3519727"
 #define LED 0
 
 void login_init();
@@ -17,7 +16,7 @@ void request_init();
 void database_process();
 void server_receive();
 
-char ssid[32]="Smart_Sw4";
+char ssid[32]="smart_switch";
 char password[32]="12345678";
 
 char router_ssid[32]="SSID";
@@ -25,13 +24,12 @@ char router_password[32]="12345678";
 String router_ssid_str;
 
 String switch_server_request;
-char serial_number[15]="6754-6303";
+char serial_number[15]=CHIP_ID_STR;
 
 WiFiServer server(80);
 WiFiClient client;
 WiFiClientSecure switch_server;
 
-//char url []="takmobile12.ir";
 char url []="mamatirnoavar.ir";
 
 String database_bytes;
@@ -60,7 +58,7 @@ void setup() {
   pinMode(LED, OUTPUT);
   digitalWrite(LED, HIGH);
   
-  if((ESP.getChipId() != CHIP_ID) || (ESP.getFlashChipId() != FLASH_ID))
+  if((ESP.getChipId() != CHIP_ID))
   {
     ESP.restart();
   }
@@ -79,7 +77,7 @@ void loop() {
   {
     if (WiFi.status() == WL_CONNECTED) 
     {
-      if(switch_server.connect(url, https_port))
+      if(switch_server.connect(url, 443))
       {
         request_init();
         switch_server.print(switch_server_request); 
@@ -239,6 +237,10 @@ void control_init()
   root += "<p> <br> <p>\r\n";
   
   root += "<p style=\"text-align:right; \"><input style=\"width:100px; height:25px; \" type=\"submit\" name=\"setting\" value=\"تنظیمات\"><p>\r\n";
+  root += "<p style=\"font-size:30px; text-align:center;\">"; 
+  root += serial_number; 
+  root += "</p>\r\n";
+  
   root += "</form>\r\n";
   root += "</body>\r\n";
   root += "</html>\r\n";
